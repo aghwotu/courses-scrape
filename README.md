@@ -1,3 +1,3 @@
 # Puppeteer
 
-Test project the puppeteer library
+Test project using the [puppeteer](https://pptr.dev/) library
