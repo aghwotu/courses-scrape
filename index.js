@@ -1,0 +1,52 @@
+// file system module
+const fs = require('fs');
+const puppeteer = require('puppeteer');
+
+async function run() {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://www.traversymedia.com');
+
+  // access DOM elements or do whatever you want
+  // await page.screenshot({ path: 'example.png', fullPage: true });
+  // await page.pdf({ path: 'example.pdf', format: 'A4', fullPage: true });
+
+  // const html = await page.content();
+
+  // const title = await page.evaluate(() => document.title);
+
+  // const text = await page.evaluate(() => document.body.innerText);
+
+  // const links = await page.evaluate(() => Array.from(document.querySelectorAll('a'), (e) => e.href));
+
+  // const courses = await page.evaluate(() =>
+  //   Array.from(document.querySelectorAll('#courses .card'), (e) => ({
+  //     title: e.querySelector('.card-body h3').innerText,
+  //     level: e.querySelector('.card-body .level').innerText,
+  //     url: e.querySelector('.card-footer a').href,
+  //     promo: e.querySelector('.card-footer .promo-code .promo').innerText,
+  //   }))
+  // );
+
+  // option2 - alternative to Array.from()
+  const courses = await page.$$eval('#courses .card', (elements) =>
+    elements.map((e) => ({
+      title: e.querySelector('.card-body h3').innerText,
+      level: e.querySelector('.card-body .level').innerText,
+      url: e.querySelector('.card-footer a').href,
+      promo: e.querySelector('.card-footer .promo-code .promo').innerText,
+    }))
+  );
+
+  // save date to a JSON file
+  fs.writeFile('courses.json', JSON.stringify(courses), (err) => {
+    if (err) throw err;
+    console.log('File saved');
+  });
+
+  console.log(courses);
+
+  await browser.close();
+}
+
+run();
